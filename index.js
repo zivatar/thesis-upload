@@ -146,12 +146,13 @@ function sendData(allParams) {
       setTimeout(function () {
         var line = {};
         for (var j = 0; j < allParams.length; j++) {
-          if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] != "") {
+          if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] !== "") {
             line[allParams[j]] = fileData.data[l][j];
             }
           }
-        //console.log(line);
+        console.log(line);
         // TODO post line
+
         var percentage = "" + Math.round(100 * l / (fileData.data.length - 1)) + "%";
         txt = document.createTextNode(percentage);
         parent.innerText = txt.textContent;
