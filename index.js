@@ -106,23 +106,56 @@ function renderColumnSelectorOkBtn() {
   parent.appendChild(button);
 }
 
+function findWeatherParameterById(idx) {
+  for (var i = 0; i < weatherParameters.length; i++) {
+    if (weatherParameters[i].id == idx) {
+      return i;
+    }
+  }
+}
+
 function onSelectingColumnOk() {
   var setParams = [];
+  var allParams = [];
   for (var i = 0; i < fileData.data[0].length; i++){
     var elem = document.getElementById("selectColumn"+i);
     if (!!elem.value) {
       setParams.push(elem.value);
     }
+    allParams.push(elem.value);
   }
-  if (setParams.isUnique) {
-
+  if (!setParams.length) {
+    alert("Nincs kiválasztva semmi!")
+  } else if (!!isUnique(setParams)) {
+    nextState();
+    setTimeout(function() {
+      sendData(allParams);
+    }, 0);
   } else {
     alert("Nem egyedi a kiválasztás!");
   }
 }
 
+function sendData(allParams) {
+  var parent = document.getElementById("current_line");
+  for (var l = 1; l < fileData.data.length; l++) {
+    var line = {};
+    for (var j = 0; j < allParams.length; j++) {
+      if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] != "") {
+        line[allParams[j]] = fileData.data[l][j];
+      }
+    }
+    console.log(line);
+    var percentage = "" + Math.round(100 * l / (fileData.data.length - 1)) + "%";
+    txt = document.createTextNode(percentage);
+    parent.innerText = txt.textContent;
+  }
+}
+
+/* UTILS ----------------------------------------------- */
+
 function isUnique(arr) {
-  arrUnique = arr.filter(function(item, pos) {
+  var arrUnique = arr.filter(function(item, pos) {
     return arr.indexOf(item) == pos;
   })
   return arr.length == arrUnique.length;
