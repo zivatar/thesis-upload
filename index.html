@@ -6,9 +6,10 @@
 	<script src="index.js"></script>
 
 	<script>
-  $(document).ready(function(){
-    $("#csv-file").change(handleFileSelect);
-  });
+  		$(document).ready(function(){
+    		$("#csv-file").change(handleFileSelect);
+    		setState("SELECT_FILE");
+  		});
 	</script>
 </head>
 <body>
@@ -26,7 +27,7 @@
 		</div>
 
 		<div id="FINISHED" class="state">
-
+			Vége
 		</div>
 	</div>
 </body>
