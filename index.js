@@ -7,6 +7,12 @@ var states = {
 	FINISHED: { id: "FINISHED" }
 }
 
+var weatherParameters = [
+  { id: "NA", name: "-" },
+  { id: "date", name: "Dátum" },
+  { id: "relativePressure", name: "Relatív légnyomás"}
+];
+
 function setState(newState) {
   if (newState in states) {
     currentState = newState;
@@ -30,12 +36,53 @@ function handleFileSelect(evt) {
   var file = evt.target.files[0];
  
   Papa.parse(file, {
-    header: true,
+    header: false,
     dynamicTyping: true,
     complete: function(results) {
       fileData = results;
-      console.log(fileData);
+      if (!!fileData.data) {
+        nextState();
+        renderColumnSelector();
+      } else {
+        console.error('something bad happened');
+      }
     }
   });
+}
+
+function renderWeatherParameterOption(row) {
+  var selectList = document.createElement("select");
+  selectList.setAttribute("id", "selectColumn"+row);
+
+  for (var i = 0; i < weatherParameters.length; i++) {
+    var option = document.createElement("option");
+    option.setAttribute("value", weatherParameters[i].id);
+    option.text = weatherParameters[i].name;
+    selectList.appendChild(option);
+  }
+
+  return selectList;
+}
+
+function renderColumnSelector() {
+  var parent = document.getElementById(currentState);
+  var table = document.createElement('table');
+  table.className = "table table-striped";
+  for (var i = 1; i < fileData.data[0].length; i++){
+    var tr = document.createElement('tr');   
+
+    var td1 = document.createElement('td');
+    var td2 = document.createElement('td');
+
+    var text1 = document.createTextNode(fileData.data[0][i]);
+
+    td1.appendChild(text1);
+    td2.appendChild(renderWeatherParameterOption('i'));
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+
+    table.appendChild(tr);
+  }
+  parent.appendChild(table);
 }
 
