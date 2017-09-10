@@ -83,18 +83,31 @@ function renderColumnSelector() {
 
     var td1 = document.createElement('td');
     var td2 = document.createElement('td');
+    var td3 = document.createElement('td');
 
     var text1 = document.createTextNode(fileData.data[0][i]);
+    var text2 = document.createTextNode(fileData.data[1][i]);
 
     td1.appendChild(text1);
     td2.appendChild(renderWeatherParameterOption(i));
+    td3.appendChild(text2);
     tr.appendChild(td1);
     tr.appendChild(td2);
+    tr.appendChild(td3);
 
     table.appendChild(tr);
   }
   parent.appendChild(table);
+  renderDateFormatInput();
   renderColumnSelectorOkBtn();
+}
+
+function renderDateFormatInput() {
+  var parent = document.getElementById(currentState);
+  var input = document.createElement("input");
+  input.placeholder = "Mi a dátum formátuma?";
+  input.setAttribute("id", "dateFormatInput");
+  parent.appendChild(input);
 }
 
 function renderColumnSelectorOkBtn() {
@@ -124,16 +137,43 @@ function onSelectingColumnOk() {
     }
     allParams.push(elem.value);
   }
-  if (!setParams.length) {
-    alert("Nincs kiválasztva semmi!")
-  } else if (!!isUnique(setParams)) {
-    nextState();
-    setTimeout(function() {
-      sendData(allParams);
-    }, 0);
-  } else {
-    alert("Nem egyedi a kiválasztás!");
+
+  var dateFormat = document.getElementById("dateFormatInput").value;
+  if (!dateFormat) {
+    alert("Nincs kitöltve a dátum formátum!");
+    return false;
   }
+
+  if (!setParams.length) {
+    alert("Nincs kiválasztva semmi!");
+    return false;
+  } else if (!isUnique(setParams)) {
+    alert("Nem egyedi a kiválasztás!");
+    return false;
+  }
+
+  var dateColumn = allParams.indexOf("date");
+  if (dateColumn == -1) {
+    alert("Nincs dátum mező!");
+    return false;
+  } else {
+    var d = fileData.data[1][dateColumn];
+    console.log(d);
+    console.log(dateFormat);
+    var datetime = moment(d, dateFormat);
+    console.log(datetime);
+    return;
+    if (!datetime._isValid) {
+      alert("Nem helyes dátum mező!");
+      return false;
+    }
+  }
+
+  nextState();
+  setTimeout(function() {
+    sendData(allParams, dateFormat);
+  }, 0);
+  return true;
 }
 
 function sendData(allParams) {
@@ -147,7 +187,12 @@ function sendData(allParams) {
         var line = {};
         for (var j = 0; j < allParams.length; j++) {
           if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] !== "") {
-            line[allParams[j]] = fileData.data[l][j];
+            if (allParams[i] == "date") {
+              line[allParams[j]] = moment(fileData.data[l][j], dateFormat);
+            } else {
+              line[allParams[j]] = fileData.data[l][j];
+            }
+            
             }
           }
         console.log(line);
