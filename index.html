@@ -1,0 +1,32 @@
+<html>
+<head>
+	<link rel="stylesheet" href="upload.css">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="papaparse.min.js"></script>
+	<script src="index.js"></script>
+
+	<script>
+  $(document).ready(function(){
+    $("#csv-file").change(handleFileSelect);
+  });
+	</script>
+</head>
+<body>
+	<div id="upload_container">
+		<div id="SELECT_FILE" class="state">
+  		Válaszd ki az adatforrást: <input type="file" id="csv-file" name="files">
+		</div>
+
+		<div id="SELECT_COLUMNS" class="state">
+			Melyik oszlop milyen adatot tartalmaz?
+		</div>
+
+		<div id="UPLOAD_ROWS" class="state">
+			Feltöltés alatt
+		</div>
+
+		<div id="FINISHED" class="state">
+
+		</div>
+	</div>
+</body>
