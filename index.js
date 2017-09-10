@@ -10,7 +10,17 @@ var states = {
 var weatherParameters = [
   { id: "NA", name: "-" },
   { id: "date", name: "Dátum" },
-  { id: "relativePressure", name: "Relatív légnyomás"}
+  { id: "relativePressure", name: "Relatív légnyomás (hPa)" },
+  { id: "tempIndoor", name: "Szobahőmérséklet (°C)" },
+  { id: "rhIndoor", name: "Relatív nedvesség a szobában (%)" },
+  { id: "temperature", name: "Hőmérséklet (°C)" },
+  { id: "relativeHumidity", name: "Relatív nedvesség (%)" },
+  { id: "dewpoint", name: "Harmatpont (°C)" },
+  { id: "windChill", name: "Hőérzet (°C)" },
+  { id: "windSpeed", name: "Szélsebesség (m/s)" },
+  { id: "windDirection", name: "Szélirány (°)" },
+  { id: "windGustSpeed", name: "Széllökés sebesség (m/s)" },
+  { id: "precipitation", name: "Csapadékmennyiség (mm)" }
 ];
 
 function setState(newState) {
