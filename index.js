@@ -8,7 +8,7 @@ var states = {
 }
 
 var weatherParameters = [
-  { id: "NA", name: "-" },
+  { id: "", name: "-" },
   { id: "date", name: "Dátum" },
   { id: "relativePressure", name: "Relatív légnyomás (hPa)" },
   { id: "tempIndoor", name: "Szobahőmérséklet (°C)" },
@@ -78,7 +78,7 @@ function renderColumnSelector() {
   var parent = document.getElementById(currentState);
   var table = document.createElement('table');
   table.className = "table table-striped";
-  for (var i = 1; i < fileData.data[0].length; i++){
+  for (var i = 0; i < fileData.data[0].length; i++){
     var tr = document.createElement('tr');   
 
     var td1 = document.createElement('td');
@@ -87,12 +87,54 @@ function renderColumnSelector() {
     var text1 = document.createTextNode(fileData.data[0][i]);
 
     td1.appendChild(text1);
-    td2.appendChild(renderWeatherParameterOption('i'));
+    td2.appendChild(renderWeatherParameterOption(i));
     tr.appendChild(td1);
     tr.appendChild(td2);
 
     table.appendChild(tr);
   }
   parent.appendChild(table);
+  renderColumnSelectorOkBtn();
 }
 
+function renderColumnSelectorOkBtn() {
+  var parent = document.getElementById(currentState);
+  var button = document.createElement('button');
+  var txt = document.createTextNode("Kész");
+  button.appendChild(txt);
+  button.onclick = onSelectingColumnOk;
+  parent.appendChild(button);
+}
+
+function onSelectingColumnOk() {
+  var setParams = [];
+  for (var i = 0; i < fileData.data[0].length; i++){
+    var elem = document.getElementById("selectColumn"+i);
+    if (!!elem.value) {
+      setParams.push(elem.value);
+    }
+  }
+  if (setParams.isUnique) {
+
+  } else {
+    alert("Nem egyedi a kiválasztás!");
+  }
+}
+
+function isUnique(arr) {
+  arrUnique = arr.filter(function(item, pos) {
+    return arr.indexOf(item) == pos;
+  })
+  return arr.length == arrUnique.length;
+}
+
+// http://geniuscarrier.com/copy-object-in-javascript/
+function shallowCopy(oldObj) {
+    var newObj = {};
+    for(var i in oldObj) {
+        if(oldObj.hasOwnProperty(i)) {
+            newObj[i] = oldObj[i];
+        }
+    }
+    return newObj;
+}
