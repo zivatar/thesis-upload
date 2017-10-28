@@ -99,6 +99,7 @@ function renderColumnSelector() {
   }
   parent.appendChild(table);
   renderDateFormatInput();
+  renderDateFormatHelp();
   renderColumnSelectorOkBtn();
 }
 
@@ -108,6 +109,22 @@ function renderDateFormatInput() {
   input.placeholder = "Mi a dátum formátuma?";
   input.setAttribute("id", "dateFormatInput");
   parent.appendChild(input);
+}
+
+function renderDateFormatHelp() {
+  var parent = document.getElementById(currentState);
+  var p = document.createElement("P");
+  p.appendChild(document.createTextNode("YYYY: év; "));
+  p.appendChild(document.createTextNode("MM: hónap; "));
+  p.appendChild(document.createTextNode("DD: nap; "));
+  p.appendChild(document.createTextNode("hh: óra"));
+  p.appendChild(document.createTextNode("mm: perc"));
+  p.appendChild(document.createTextNode("ss: másodperc"));
+  p.appendChild(document.createTextNode("a: am/pm"));
+  parent.appendChild(p);
+  p = document.createElement("P");
+  p.appendChild(document.createTextNode("20.11.2016 21:40 DD.MM.YYYY hh:mm"));
+  parent.appendChild(p);
 }
 
 function renderColumnSelectorOkBtn() {
@@ -162,7 +179,6 @@ function onSelectingColumnOk() {
     console.log(dateFormat);
     var datetime = moment(d, dateFormat);
     console.log(datetime);
-    return;
     if (!datetime._isValid) {
       alert("Nem helyes dátum mező!");
       return false;
@@ -176,10 +192,12 @@ function onSelectingColumnOk() {
   return true;
 }
 
-function sendData(allParams) {
+function sendData(allParams, dateFormat) {
   var parent = document.getElementById("current_line");
 
   var iterations = fileData.data.length;
+  var dataToSend = [];
+  var limit = 1000;
 
   var loop = function (l) {
     if (l < iterations) {
@@ -187,16 +205,25 @@ function sendData(allParams) {
         var line = {};
         for (var j = 0; j < allParams.length; j++) {
           if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] !== "") {
-            if (allParams[i] == "date") {
-              line[allParams[j]] = moment(fileData.data[l][j], dateFormat);
+            if (allParams[j] == "date") {
+              line[allParams[j]] = moment(fileData.data[l][j], dateFormat).valueOf();
             } else {
               line[allParams[j]] = fileData.data[l][j];
             }
             
             }
           }
-        console.log(line);
+        if (!!Object.keys(line).length) {
+          dataToSend.push(line);
+          //console.log(line);
+          if (dataToSend.length >= limit) {
+            //post
+            console.log("send", dataToSend.length);
+            dataToSend = [];
+          }
         // TODO post line
+        }
+        
 
         var percentage = "" + Math.round(100 * l / (fileData.data.length - 1)) + "%";
         txt = document.createTextNode(percentage);
@@ -204,6 +231,7 @@ function sendData(allParams) {
         loop(l + 1)
       }, 0);
     } else {
+      console.log("send at the end", dataToSend.length);
       nextState();
       // TODO post calculate statistics
     }
